@@ -60,6 +60,10 @@ public class Tank {
         }
     }
 
+    public void setPosition(Vector2 vector) {
+        this.pos = vector;
+    }
+
     public Vector2 getPosition() {
         return this.pos;
     }

@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 /**
  * Created by lorin on 9/14/17.
@@ -27,14 +28,21 @@ public class MainThread {
     ControlStick controlStick;
     Paint paint;
     ImageView canvasObj;
+    TextView fpsCounter;
+    Multiplayer multiplayer;
 
-    MainThread(CanvasEntry callerThread, ImageView imageView) { //CanvasEntry callerThread
+    MainThread(CanvasEntry callerThread, ImageView imageView, TextView fpsCounter) { //CanvasEntry callerThread
         this.callerThread = callerThread;
+        this.fpsCounter = fpsCounter;
         canvasObj = imageView;
 
+
+        //Load Objects
         camera = new Camera();
         map = new Map(callerThread, camera);
         mainTank = new Tank(callerThread, camera);
+        multiplayer = new Multiplayer(callerThread, camera);
+
 
         camera.setFocus(mainTank);
         controlStick = new ControlStick(callerThread, mainTank);
@@ -52,6 +60,7 @@ public class MainThread {
         while (true) {
             mainTank.move();
             camera.updatePosition();
+            multiplayer.run();
 
 
             //Draw elements on screen
@@ -116,6 +125,7 @@ public class MainThread {
         //drawTank(tempCanvas, mainTank);
         map.draw(tempCanvas);
         mainTank.draw(tempCanvas);
+        multiplayer.draw(tempCanvas);
         controlStick.draw(tempCanvas);
 
 
