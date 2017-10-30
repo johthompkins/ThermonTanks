@@ -4,7 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.util.Log;
+
+import com.example.lorin.thermontanks.Tank.Tank;
 
 /**
  * Created by lorin on 9/15/2017.

@@ -1,16 +1,19 @@
 package com.example.lorin.thermontanks;
 
-import android.graphics.Color;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.graphics.Bitmap;
-import android.graphics.Paint;
-import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.widget.ImageView;
-import android.graphics.Canvas;
 
+import com.example.lorin.thermontanks.Tank.TankApperance;
+
+/**
+ * Activity
+ * The entry into the main game
+ * Calls the MainThread.
+ */
 public class CanvasEntry extends AppCompatActivity {
 
     //ImageView canvasObj;
@@ -22,8 +25,11 @@ public class CanvasEntry extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_canvas);
 
+        Intent intent = getIntent();
+        TankApperance tankApperance = (TankApperance) intent.getSerializableExtra("TankAppereance");
+
         ImageView canvasObj = (ImageView) findViewById(R.id.ImageView);
-        mainThread = new MainThread(this, canvasObj);
+        mainThread = new MainThread(this, canvasObj, tankApperance);
 
 
         new Thread(new Runnable() {
@@ -49,6 +55,14 @@ public class CanvasEntry extends AppCompatActivity {
                 mainThread.touchUp(x,y);
         }
         return false;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP){
+            mainThread.shoot();
+        }
+        return true;
     }
 }
 
