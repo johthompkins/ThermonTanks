@@ -4,13 +4,20 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.lorin.thermontanks.Multiplayer.Multiplayer;
+import com.example.lorin.thermontanks.Physics.Physics;
+import com.example.lorin.thermontanks.Tank.BulletContainer;
+import com.example.lorin.thermontanks.Tank.Tank;
+import com.example.lorin.thermontanks.Tank.TankApperance;
+
 /**
  * Created by lorin on 9/14/17.
+ * The main thread of the the program,
+ * controls order and running
  */
 
 public class MainThread {
@@ -19,31 +26,35 @@ public class MainThread {
     final int WIDTH = 1600;
     final int HEIGHT = 900;
 
-    int canvasXSize;
-    int canvasYSize;
+    private int canvasXSize;
+    private int canvasYSize;
 
-    public Camera camera;
-    public Map map;
-    Tank mainTank;
-    ControlStick controlStick;
-    Paint paint;
-    ImageView canvasObj;
-    TextView fpsCounter;
-    Multiplayer multiplayer;
+    private Camera camera;
+    private Map map;
+    private Tank mainTank;
+    private ControlStick controlStick;
+    private Paint paint;
+    private ImageView canvasObj;
+    private TextView fpsCounter;
+    private Multiplayer multiplayer;
+    private FramesController framesPerSecond;
+    private Physics physicsEngine;
+    private BulletContainer bullets;
 
-    MainThread(CanvasEntry callerThread, ImageView imageView, TextView fpsCounter) { //CanvasEntry callerThread
+    MainThread(CanvasEntry callerThread, ImageView imageView, TankApperance tankApperance) { //CanvasEntry callerThread
         this.callerThread = callerThread;
-        this.fpsCounter = fpsCounter;
         canvasObj = imageView;
-
 
         //Load Objects
         camera = new Camera();
+        physicsEngine = Physics.getPhysics();
         map = new Map(callerThread, camera);
-        mainTank = new Tank(callerThread, camera);
-        multiplayer = new Multiplayer(callerThread, camera);
+        mainTank = new Tank(callerThread, camera, tankApperance);
+        framesPerSecond = new FramesController((TextView) callerThread.findViewById(R.id.fps), (TextView) callerThread.findViewById(R.id.load));
+        bullets = new BulletContainer(camera);
+        multiplayer = new Multiplayer(callerThread, camera, mainTank, bullets);
 
-
+        //Set focus of objects
         camera.setFocus(mainTank);
         controlStick = new ControlStick(callerThread, mainTank);
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -58,9 +69,13 @@ public class MainThread {
     //Main loop of thread
     public void run() {
         while (true) {
-            mainTank.move();
+            framesPerSecond.setFrame();
+            double delta = framesPerSecond.getDeltaTime();
+            mainTank.move(delta);
             camera.updatePosition();
             multiplayer.run();
+            physicsEngine.checkPhysics();
+            bullets.move();
 
 
             //Draw elements on screen
@@ -74,13 +89,14 @@ public class MainThread {
 
             //60 fps
             try {
-                Thread.sleep((int) (1.0 / 60.0 * 1000.0));
+                Thread.sleep(framesPerSecond.getMilisecondDelay());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
 
+    //Get the touched position on screen
     public void touch(int x, int y) {
         if (canvasXSize == 0) {
             getCanvasSize();
@@ -92,6 +108,7 @@ public class MainThread {
         }
     }
 
+    //Get the moved position of the touch on screen
     public void moveTouch(int x, int y) {
         if (canvasXSize == 0) {
             getCanvasSize();
@@ -103,6 +120,13 @@ public class MainThread {
         }
     }
 
+    public void shoot() {
+
+        //Log.e("Lorin","Tried to shoot...");
+        mainTank.shoot(bullets);
+    }
+
+    //The touch let up
     public void touchUp(int x, int y) {
         if (canvasXSize == 0) {
             getCanvasSize();
@@ -122,8 +146,8 @@ public class MainThread {
         Canvas tempCanvas = new Canvas(tempBitmap);
 
         //Draw elements on canvas
-        //drawTank(tempCanvas, mainTank);
         map.draw(tempCanvas);
+        bullets.draw(tempCanvas);
         mainTank.draw(tempCanvas);
         multiplayer.draw(tempCanvas);
         controlStick.draw(tempCanvas);
@@ -131,6 +155,7 @@ public class MainThread {
 
         //set bitmap to imageView
         canvasObj.setImageBitmap(tempBitmap);
+        framesPerSecond.draw();
     }
 
 }

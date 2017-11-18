@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.lorin.thermontanks.TankCustom">
+
+    <TableRow
+        android:id="@+id/tableRow"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.16000003"
+        android:layout_marginTop="32dp">
+
+        <ImageButton
+            android:id="@+id/sizePrevArrow"
+            android:layout_width="wrap_content"
+            android:layout_height="15dp"
+            android:elevation="0dp"
+            android:onClick="sizePrevArrow"
+            android:text="Prev"
+            app:srcCompat="@android:drawable/ic_media_rew"
+            tools:layout_editor_absoluteX="49dp"
+            tools:layout_editor_absoluteY="198dp" />
+
+        <TextView
+            android:id="@+id/SizeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:text="TextView"
+            android:textColor="@android:color/holo_green_dark"
+            tools:layout_editor_absoluteX="161dp"
+            tools:layout_editor_absoluteY="198dp" />
+
+        <ImageButton
+            android:id="@+id/sizeNextArrow"
+            android:layout_width="wrap_content"
+            android:layout_height="15dp"
+            android:onClick="sizeNextArrow"
+            android:text="Next"
+            app:srcCompat="@android:drawable/ic_media_ff"
+            tools:layout_editor_absoluteX="243dp"
+            tools:layout_editor_absoluteY="198dp" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow2"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tableRow"
+        app:layout_constraintVertical_bias="0.04000002"
+        android:layout_marginTop="32dp">
+
+        <ImageButton
+            android:id="@+id/colorPrevArrow"
+            android:layout_width="wrap_content"
+            android:layout_height="15dp"
+            android:onClick="colorPrevArrow"
+            android:text="Prev"
+            app:srcCompat="@android:drawable/ic_media_rew"
+            tools:layout_editor_absoluteX="49dp"
+            tools:layout_editor_absoluteY="198dp" />
+
+        <TextView
+            android:id="@+id/ColorTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:text="TextView"
+            android:textColor="@android:color/holo_green_dark"
+            tools:layout_editor_absoluteX="161dp"
+            tools:layout_editor_absoluteY="198dp" />
+
+        <ImageButton
+            android:id="@+id/colorNextArrow"
+            android:layout_width="match_parent"
+            android:layout_height="15dp"
+            android:onClick="colorNextArrow"
+            android:text="Next"
+            app:srcCompat="@android:drawable/ic_media_ff"
+            tools:layout_editor_absoluteX="243dp"
+            tools:layout_editor_absoluteY="198dp" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tableRow2"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="30dp">
+
+        <Button
+            android:id="@+id/start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/button_onoff_indicator_on"
+            android:onClick="startGame"
+            android:text="Start"
+            app:srcCompat="@android:drawable/button_onoff_indicator_on"
+            tools:layout_editor_absoluteX="148dp"
+            tools:layout_editor_absoluteY="214dp" />
+    </TableRow>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginTop="8dp"
+        android:text="Thermon Tanks"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textColor="#7fa87f"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/tableRow"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.22000003" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Size"
+        android:textAlignment="center"
+        android:textColor="#7fa87f"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintBottom_toTopOf="@+id/tableRow"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="17dp"
+        android:layout_marginBottom="8dp"
+        android:text="Color"
+        android:textAlignment="center"
+        android:textColor="#7fa87f"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/tableRow2"
+        app:layout_constraintTop_toBottomOf="@+id/tableRow"
+        app:layout_constraintVertical_bias="0.8"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+
+</android.support.constraint.ConstraintLayout>

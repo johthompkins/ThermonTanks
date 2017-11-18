@@ -1,9 +1,10 @@
 package com.example.lorin.thermontanks;
 
-import android.util.Log;
+import com.example.lorin.thermontanks.Tank.Tank;
 
 /**
  * Created by lorin on 9/17/2017.
+ * Camera Object to position the camera on the map.
  */
 
 public class Camera {
@@ -11,8 +12,8 @@ public class Camera {
     private Vector2 position;
     private Tank focus;
 
-    private Vector2 lowerBoundry = new Vector2(100,100);
-    private Vector2 upperBoundry = new Vector2(1350,650);
+    private Vector2 lowerBoundry = new Vector2(700,350);
+    private Vector2 upperBoundry = new Vector2(900,550);
 
     public Camera() {
         this.position = new Vector2(0,0);
