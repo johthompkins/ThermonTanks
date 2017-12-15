@@ -108,4 +108,13 @@ public class TankCustom extends AppCompatActivity
         startActivity(intent);
     }
 
+
+    public void goToEnd(View view) {
+
+    }
+
+    @Override
+    public void onBackPressed() {
+    }
+
 }

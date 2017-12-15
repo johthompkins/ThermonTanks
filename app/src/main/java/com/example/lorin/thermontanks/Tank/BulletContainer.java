@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.example.lorin.thermontanks.Camera;
 import com.example.lorin.thermontanks.Multiplayer.BulletContainerMultiplayer;
+import com.example.lorin.thermontanks.Physics.BulletPhysics;
 import com.example.lorin.thermontanks.Physics.BulletRectangle;
 import com.example.lorin.thermontanks.Physics.Physics;
 import com.example.lorin.thermontanks.Vector2;
@@ -76,6 +77,7 @@ public class BulletContainer implements Serializable {
         addBullet = true;
     }
 
+    //Move all the bullets checking if they need removed
     public void move() {
         Iterator<Bullet> it = bullets.iterator();
         while (it.hasNext()) {
@@ -86,8 +88,10 @@ public class BulletContainer implements Serializable {
         }
 
         Physics physicsEngine = Physics.getPhysics();
+        BulletPhysics bulletsEngine = BulletPhysics.getPhysics();
         for (Bullet bullet : removeBullets) {
             physicsEngine.removePhysicsObject(bullet.bulletRectangle);
+            bulletsEngine.removePhysicsObject(bullet.bulletRectangle);
             bullets.remove(bullet);
         }
 
@@ -98,13 +102,14 @@ public class BulletContainer implements Serializable {
         callBack();
     }
 
+    //Method to add bullets later - to avoid concurrent exceptions
     private void callBack() {
         if (addBullet) {
             bullets.add(tempBullet);
             Physics.getPhysics().addPhysicsObject(tempRect);
+            BulletPhysics.getPhysics().addPhysicsObject(tempRect);
             addBullet = false;
         }
-
     }
 
     public void collision(Bullet bullet) {

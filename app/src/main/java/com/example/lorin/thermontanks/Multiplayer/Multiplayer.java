@@ -20,6 +20,8 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import android.util.Base64;
@@ -44,6 +46,7 @@ public class Multiplayer {
     private boolean responded = true;
     private int requestDelay = 0;
     private final int REQUESTWAIT = 6;
+    private String damageTarget = "";
 
     private final static String SERVERADDRESS = "Lund.ad.mvnu.edu";
     private final static int PORT = 25565;
@@ -67,6 +70,7 @@ public class Multiplayer {
                     public void run() {
                         sendData();
                         lastPacket = getData();
+                        handleData();
                         responded = true;
                     }
                 });
@@ -79,11 +83,17 @@ public class Multiplayer {
     public void sendData() {
         try {
             //Log.e("Lorin","Trying to connect to the server....");
-            Socket socket = new Socket(SERVERADDRESS, PORT);
+            //Socket socket = new Socket(SERVERADDRESS, PORT);
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress(SERVERADDRESS, PORT), 500);
             //Log.e("Lorin","Connected!");
             PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
 
             Packet newObj = new Packet(localTank.getMultiplayerInstance(),localBulletContainer.getBulletContainerMultiplayer());
+            if (!damageTarget.equals("")) {
+                newObj.damagePacket.setDamageTarget(damageTarget);
+                damageTarget = "";
+            }
 
             String retString = encodeObject(newObj);
             printWriter.println(retString);
@@ -99,10 +109,11 @@ public class Multiplayer {
         Packet packet = null;
 
         try {
-            Log.e("Lorin","Waiting for connection from server...");
+            //Log.e("Lorin","Waiting for connection from server...");
             ServerSocket serverSocket = new ServerSocket(PORT);
+            serverSocket.setSoTimeout(500);
             Socket clientSocket = serverSocket.accept();
-            Log.e("Lorin","Done!");
+            //Log.e("Lorin","Done!");
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             while((inputLine = bufferedReader.readLine()) != null) {
                 packet = decodeObject(inputLine);
@@ -112,6 +123,7 @@ public class Multiplayer {
         }
         catch(Exception e) {
             System.out.println(e);
+            packet = lastPacket;
         }
 
         return packet;
@@ -146,6 +158,19 @@ public class Multiplayer {
         return packet;
     }
 
+    public void setDamageTarget(String target) {
+        Log.e("Lorin","The TANK WAS DAMAGED FROM CLIENT!!!!");
+        damageTarget = target;
+    }
+
+    private void handleData() {
+        if (lastPacket != null) {
+            if (lastPacket.damagePacket != null && !lastPacket.damagePacket.getDamageTarget().isEmpty()) {
+                localTank.damageTank();
+                Log.e("Lorin", "The tank was damaged from server!");
+            }
+        }
+    }
 
     //Draw all information from the packet onto the screen.
     public void draw(Canvas canvas) {
@@ -156,7 +181,7 @@ public class Multiplayer {
             for (TankPacket tankPacket : lastPacket.otherTankPackets) {
                 MultiplayerTank curTank = tanks[counter];
                 if (curTank == null) {
-                    tanks[counter] = new MultiplayerTank(context, camera, new TankApperance(tankPacket.getSize(),tankPacket.getColor()), tankPacket.getPosition());
+                    tanks[counter] = new MultiplayerTank(context, camera, new TankApperance(tankPacket.getSize(),tankPacket.getColor()), tankPacket.getPosition(), tankPacket.clientId, this);
                     curTank = tanks[counter];
                 }
                 if (curTank.getGoalPos().equals(tankPacket.getPosition())) {

@@ -16,10 +16,13 @@ public class TankPacket implements Serializable {
     public Vector2 velocity;
     public String size;
     public String color;
+    public String clientId;
+    public boolean gone;
 
     public TankPacket() {
 
     }
+
 
     public Vector2 getPosition() {
         return position;

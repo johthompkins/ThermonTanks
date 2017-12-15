@@ -39,7 +39,11 @@ public class TankApperance implements Serializable
     }
 
     public int getShootingDelay() {
-        return 1000000000;
+        switch (size) {
+            case "Small": return 1000000000 / 2;
+            case "Medium": return 1000000000;
+            default: return 1000000000 * 2;
+        }
     }
 
     public String getSize()

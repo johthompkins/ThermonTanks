@@ -1,6 +1,7 @@
 package com.example.lorin.thermontanks;
 
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -26,6 +27,10 @@ public class CanvasEntry extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_canvas);
+
+
+        //Intent intent = new Intent(CanvasEntry.this, Respawn.class);
+        //startActivity(intent);
 
         Intent intent = getIntent();
         TankApperance tankApperance = (TankApperance) intent.getSerializableExtra("TankAppereance");
@@ -65,6 +70,10 @@ public class CanvasEntry extends AppCompatActivity {
             mainThread.shoot();
         }
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 }
 

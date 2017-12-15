@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.lorin.thermontanks.Multiplayer.Multiplayer;
+import com.example.lorin.thermontanks.Physics.BulletPhysics;
 import com.example.lorin.thermontanks.Physics.Physics;
 import com.example.lorin.thermontanks.Tank.BulletContainer;
 import com.example.lorin.thermontanks.Tank.Tank;
@@ -39,6 +40,7 @@ public class MainThread {
     private Multiplayer multiplayer;
     private FramesController framesPerSecond;
     private Physics physicsEngine;
+    private BulletPhysics bulletsEngine;
     private BulletContainer bullets;
 
     MainThread(CanvasEntry callerThread, ImageView imageView, TankApperance tankApperance) { //CanvasEntry callerThread
@@ -48,6 +50,7 @@ public class MainThread {
         //Load Objects
         camera = new Camera();
         physicsEngine = Physics.getPhysics();
+        bulletsEngine = BulletPhysics.getPhysics();
         map = new Map(callerThread, camera);
         mainTank = new Tank(callerThread, camera, tankApperance);
         framesPerSecond = new FramesController((TextView) callerThread.findViewById(R.id.fps), (TextView) callerThread.findViewById(R.id.load));
@@ -68,13 +71,14 @@ public class MainThread {
 
     //Main loop of thread
     public void run() {
-        while (true) {
+        while (mainTank.shouldRun) {
             framesPerSecond.setFrame();
             double delta = framesPerSecond.getDeltaTime();
             mainTank.move(delta);
             camera.updatePosition();
             multiplayer.run();
             physicsEngine.checkPhysics();
+            bulletsEngine.checkPhysics();
             bullets.move();
 
 
@@ -87,13 +91,14 @@ public class MainThread {
             });
 
 
-            //60 fps
+            //30 fps
             try {
                 Thread.sleep(framesPerSecond.getMilisecondDelay());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+        multiplayer.run();
     }
 
     //Get the touched position on screen

@@ -1,6 +1,7 @@
 package com.example.lorin.thermontanks.Tank;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -8,9 +9,11 @@ import android.graphics.Matrix;
 import android.util.Log;
 
 import com.example.lorin.thermontanks.Camera;
+import com.example.lorin.thermontanks.CanvasEntry;
 import com.example.lorin.thermontanks.Physics.Physics;
 import com.example.lorin.thermontanks.Physics.TankRectangle;
 import com.example.lorin.thermontanks.R;
+import com.example.lorin.thermontanks.Respawn;
 import com.example.lorin.thermontanks.Vector2;
 import com.example.lorin.thermontanks.Multiplayer.TankPacket;
 
@@ -39,6 +42,10 @@ public class Tank {
     private int phyisicsId;
     private TankRectangle tankPhysics;
 
+    public boolean shouldRun = true;
+
+    private int health;
+
     //Constructor
     public Tank(Context context, Camera camera, TankApperance tankApperance) {
 
@@ -57,6 +64,8 @@ public class Tank {
         Physics physicsEngine = Physics.getPhysics();
         tankPhysics = new TankRectangle(this, pos, size, true);
         physicsEngine.addPhysicsObject(tankPhysics);
+
+        health = 1;
     }
 
     //Set unit vector velocity (direction)
@@ -75,6 +84,14 @@ public class Tank {
         }
     }
 
+    public void damageTank() {
+        health -= 1;
+        if (health <= 0) {
+            shouldRun = false;
+            Intent intent = new Intent(context, Respawn.class);
+            context.startActivity(intent);
+        }
+    }
 
     //Move tank
     public void move(double delta) {
@@ -95,17 +112,19 @@ public class Tank {
         //Rotate the tank in the direction of movement
         Matrix rotMat = new Matrix();
         float rotation = (float) this.velocity.getLookRot() + 90;
-        rotMat.postRotate( rotation, 75, 75);
-        //Log.e("Lorin","The size of the object was: " + size.x + " " + size.y);
-        rotTankImage = Bitmap.createBitmap(tankImage, 0, 0,(int) 75,(int) 75, rotMat, true);
+        if (rotation != 0f)  {
+            rotMat.postRotate( rotation, size.x, size.y);
+            //Log.e("Lorin","The size of the object was: " + size.x + " " + size.y);
+            rotTankImage = Bitmap.createBitmap(tankImage, 0, 0,(int) size.x,(int) size.y, rotMat, true);
 
-        //Calculate displacement of image based on rotation
-        rotation = (rotation)%90+225;
-        rotOffset.x = (float) (
-                (float) Math.sin(rotation/180*Math.PI) * (float) Math.pow(Math.pow(size.x/2,2)+Math.pow(size.y/2,2),.5)
-        );
+            //Calculate displacement of image based on rotation
+            rotation = (rotation)%90+225;
+            rotOffset.x = (float) (
+                    (float) Math.sin(rotation/180*Math.PI) * (float) Math.pow(Math.pow(size.x/2,2)+Math.pow(size.y/2,2),.5)
+            );
 
-        rotOffset.y = rotOffset.x;
+            rotOffset.y = rotOffset.x;
+        }
     }
 
     //Force set position
@@ -120,6 +139,7 @@ public class Tank {
         tankPacket.color = getColor();
         tankPacket.position = getPosition();
         tankPacket.velocity = velocity;
+        tankPacket.gone = !shouldRun;
         return tankPacket;
     }
 
